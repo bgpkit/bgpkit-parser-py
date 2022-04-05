@@ -1,53 +1,11 @@
 use std::collections::HashMap;
-use itertools::Itertools;
-use std::fmt::{Display, Formatter};
 use bgpkit_parser::*;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use dict_derive::{FromPyObject, IntoPyObject};
 
-macro_rules! option_to_string{
-    ($a:expr) => {
-        if let Some(v) = $a {
-            v.to_string()
-        } else {
-            String::new()
-        }
-    }
-}
-
-#[inline(always)]
-pub fn option_to_string_vec(o: &Option<Vec<String>>) -> String {
-    if let Some(v) = o {
-        v.iter()
-            .join(" ")
-    } else {
-        String::new()
-    }
-}
 #[pymodule]
 fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
-
-    impl Display for Elem {
-        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            let format = format!(
-                "{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}",
-                self.elem_type, &self.timestamp,
-                &self.peer_ip,
-                &self.peer_asn,
-                &self.prefix,
-                option_to_string!(&self.as_path),
-                option_to_string!(&self.origin),
-                option_to_string!(&self.next_hop),
-                option_to_string!(&self.local_pref),
-                option_to_string!(&self.med),
-                option_to_string_vec(&self.communities),
-                option_to_string!(&self.atomic),
-                option_to_string!(&self.aggr_asn),
-                option_to_string!(&self.aggr_ip),
-            );
-            write!(f, "{}", format)
-        }
-    }
 
     fn convert_elem(elem: BgpElem) -> Elem {
         Elem {
@@ -60,86 +18,44 @@ fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
             peer_ip: elem.peer_ip.to_string(),
             peer_asn: elem.peer_asn.asn,
             prefix: elem.prefix.to_string(),
-            next_hop: match elem.next_hop {
-                None => {None}
-                Some(v) => {Some(v.to_string())}
-            },
-            as_path: match elem.as_path {
-                None => {None}
-                Some(v) => {Some(v.to_string())}
-            },
-            origin_asns: match elem.origin_asns {
-                None => {None}
-                Some(v) => {Some(v.into_iter().map(|x|x.asn).collect())}
-            },
-            origin: match elem.origin {
-                None => {None}
-                Some(v) => {Some(v.to_string())}
-            },
+            next_hop: elem.next_hop.map(|v| v.to_string()),
+            as_path: elem.as_path.map(|v| v.to_string()),
+            origin_asns: elem.origin_asns.map(|v| v.into_iter().map(|x|x.asn).collect()),
+            origin: elem.origin.map(|v| v.to_string()),
             local_pref: elem.local_pref,
             med: elem.med,
-            communities: match elem.communities {
-                None => {None}
-                Some(v) => {Some(v.into_iter().map(|x|x.to_string()).collect())}
-            },
+            communities: elem.communities.map(|v| v.into_iter().map(|x|x.to_string()).collect()),
             atomic: match elem.atomic {
-                None => {Some("NAG".to_string())}
+                None => {
+                    None
+                }
                 Some(v) => {match v {
                     AtomicAggregate::NAG => {Some("NAG".to_string())}
                     AtomicAggregate::AG => {Some("AG".to_string())}
                 }}
             },
-            aggr_asn: match elem.aggr_asn {
-                None => {None}
-                Some(v) => {Some(v.asn)}
-            },
-            aggr_ip: match elem.aggr_ip {
-                None => {None}
-                Some(v) => {Some(v.to_string())}
-            }
+            aggr_asn: elem.aggr_asn.map(|v| v.asn),
+            aggr_ip: elem.aggr_ip.map(|v| v.to_string())
         }
     }
 
-    #[pyclass]
-    #[derive(Clone)]
-    struct Elem {
-        #[pyo3(get,set)]
+    #[derive(Clone, PartialEq, FromPyObject, IntoPyObject)]
+    pub struct Elem {
         pub timestamp: f64,
-        #[pyo3(get,set)]
         pub elem_type: String,
-        #[pyo3(get,set)]
         pub peer_ip: String,
-        #[pyo3(get,set)]
         pub peer_asn: u32,
-        #[pyo3(get,set)]
         pub prefix: String,
-        #[pyo3(get,set)]
         pub next_hop: Option<String>,
-        #[pyo3(get,set)]
         pub as_path: Option<String>,
-        #[pyo3(get,set)]
         pub origin_asns: Option<Vec<u32>>,
-        #[pyo3(get,set)]
         pub origin: Option<String>,
-        #[pyo3(get,set)]
         pub local_pref: Option<u32>,
-        #[pyo3(get,set)]
         pub med: Option<u32>,
-        #[pyo3(get,set)]
         pub communities: Option<Vec<String>>,
-        #[pyo3(get,set)]
         pub atomic: Option<String>,
-        #[pyo3(get,set)]
         pub aggr_asn: Option<u32>,
-        #[pyo3(get,set)]
         pub aggr_ip: Option<String>
-    }
-
-    #[pymethods]
-    impl Elem {
-        fn __str__(&self) -> PyResult<String> {
-            Ok(self.to_string())
-        }
     }
 
     #[pyclass]
@@ -183,10 +99,7 @@ fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
         }
 
         fn parse_next(&mut self) -> PyResult<Option<Elem>> {
-            Ok(match self.elem_iter.next() {
-                None => {None}
-                Some(e) => {Some(convert_elem(e))}
-            })
+            Ok(self.elem_iter.next().map(convert_elem))
         }
 
         fn __iter__(slf: PyRef<Self>) -> PyRef<Self> {
@@ -195,14 +108,10 @@ fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
 
         fn __next__(mut slf: PyRefMut<Self>) -> Option<Elem> {
             let e = slf.elem_iter.next();
-            match e {
-                None => {None}
-                Some(e) => {Some(convert_elem(e))}
-            }
+            e.map(convert_elem)
         }
     }
 
     m.add_class::<Parser>()?;
-    m.add_class::<Elem>()?;
     Ok(())
 }
