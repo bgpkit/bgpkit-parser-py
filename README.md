@@ -2,6 +2,15 @@
 
 Python binding for bgpkit-parser
 
+## Supported Python Version
+
+- Python3.6
+- Python3.7
+- Python3.8
+- Python3.9
+- Python3.10
+- Python3.11
+
 ## Installation
 
 ```bash
@@ -27,6 +36,8 @@ maturin publish --interpreter python3.6 --skip-existing
 maturin publish --interpreter python3.7 --skip-existing
 maturin publish --interpreter python3.8 --skip-existing
 maturin publish --interpreter python3.9 --skip-existing
+maturin publish --interpreter python3.10 --skip-existing
+maturin publish --interpreter python3.11 --skip-existing
 ```
 
 ### Publish for MacOS
