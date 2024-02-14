@@ -1,13 +1,17 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 set -e
 
-sudo rm -rf target
+# Path to the .pypirc file
+PYPICRC_FILE="$HOME/.pypirc"
 
-docker build -t bgpkit-python-builder .
+# Check if .pypirc file exists
+if [ ! -f "$PYPICRC_FILE" ]; then
+    echo "Error: .pypirc file does not exist"
+    exit 1
+fi
 
-docker run --rm -v $(pwd):/io bgpkit-python-builder build --manylinux 2014 --release --interpreter python3.7
-docker run --rm -v $(pwd):/io bgpkit-python-builder build --manylinux 2014 --release --interpreter python3.8
-docker run --rm -v $(pwd):/io bgpkit-python-builder build --manylinux 2014 --release --interpreter python3.9
-docker run --rm -v $(pwd):/io bgpkit-python-builder build --manylinux 2014 --release --interpreter python3.10
-docker run --rm -v $(pwd):/io bgpkit-python-builder build --manylinux 2014 --release --interpreter python3.11
+maturin publish --interpreter python3.8 --skip-existing
+maturin publish --interpreter python3.9 --skip-existing
+maturin publish --interpreter python3.10 --skip-existing
+maturin publish --interpreter python3.11 --skip-existing
+maturin publish --interpreter python3.12 --skip-existing

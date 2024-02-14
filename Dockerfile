@@ -25,4 +25,11 @@ RUN python3.12 -m pip install maturin patchelf
 # install Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-WORKDIR /io
+WORKDIR /io/bgpkit-parser-py
+COPY ./src .
+COPY ./build.rs .
+COPY ./build.sh .
+COPY ./Cargo.toml .
+COPY ./pyproject.toml .
+
+ENTRYPOINT ["/bin/bash", "build.sh"]
