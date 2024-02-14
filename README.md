@@ -45,6 +45,7 @@ for elem in parser:
 - Python3.9
 - Python3.10
 - Python3.11
+- Python3.12
 
 ## Installation
 
@@ -63,6 +64,23 @@ Install multiple Python interpreters:
 ```bash
 sudo apt install software-properties-common
 sudo add-apt-repository ppa:deadsnakes/ppa
+
+sudo apt install -y python3.7 python3.7-distutils
+sudo apt install -y python3.8 python3.8-distutils
+sudo apt install -y python3.9 python3.9-distutils
+sudo apt install -y python3.10 python3.10-distutils
+sudo apt install -y python3.11 python3.11-distutils
+sudo apt install -y python3.12 python3.12-distutils
+
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.7
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.8
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.9
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
+
+# install maturin
+python3.12 -m pip install maturin patchelf
 ```
 
 Build and upload for multiple interpreter versions:
@@ -72,26 +90,31 @@ maturin publish --interpreter python3.8 --skip-existing
 maturin publish --interpreter python3.9 --skip-existing
 maturin publish --interpreter python3.10 --skip-existing
 maturin publish --interpreter python3.11 --skip-existing
+maturin publish --interpreter python3.12 --skip-existing
 ```
 
 #### Using docker
 
+Build image using the [Dockerfile](./Dockerfile) provided
 ```
 docker build -t bgpkit-builder:latest .
 docker run --rm -it bgpkit-builder:latest bash
+```
 
+Run `docker run --rm -it bgpkit-builder:latest bash` to open a shell in the container
+```bash
 ####
 # TODO: copy the content of .pypirc to the root folder
 ####
-git clone https://github.com/bgpkit/bgpkit-parser.git
-cd bgpkit-parser/bgpkit-parser-py
+git clone https://github.com/bgpkit/bgpkit-parser-py.git
+cd bgpkit-parser-py
 
 maturin publish --interpreter python3.7 --skip-existing
 maturin publish --interpreter python3.8 --skip-existing
 maturin publish --interpreter python3.9 --skip-existing
 maturin publish --interpreter python3.10 --skip-existing
 maturin publish --interpreter python3.11 --skip-existing
-
+maturin publish --interpreter python3.12 --skip-existing
 ```
 
 ### Publish for MacOS
@@ -106,6 +129,7 @@ brew install python@3.8
 brew install python@3.9
 brew install python@3.10
 brew install python@3.11
+brew install python@3.12
 ```
 
 ```bash
@@ -113,6 +137,7 @@ maturin publish --interpreter python3.8 --skip-existing
 maturin publish --interpreter python3.9 --skip-existing
 maturin publish --interpreter python3.10 --skip-existing
 maturin publish --interpreter python3.11 --skip-existing
+maturin publish --interpreter python3.12 --skip-existing
 ```
 
 #### Intel-based
