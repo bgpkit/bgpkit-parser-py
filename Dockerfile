@@ -30,4 +30,5 @@ COPY ./src ./src
 COPY ./build.rs .
 COPY ./build.sh .
 COPY ./Cargo.toml .
+COPY ./README.md .
 COPY ./pyproject.toml .
