@@ -16,13 +16,13 @@ fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
                 ElemType::WITHDRAW => "W".to_string(),
             },
             peer_ip: elem.peer_ip.to_string(),
-            peer_asn: elem.peer_asn.asn,
+            peer_asn: elem.peer_asn.to_u32(),
             prefix: elem.prefix.to_string(),
             next_hop: elem.next_hop.map(|v| v.to_string()),
             as_path: elem.as_path.map(|v| v.to_string()),
             origin_asns: elem
                 .origin_asns
-                .map(|v| v.into_iter().map(|x| x.asn).collect()),
+                .map(|v| v.into_iter().map(|x| x.to_u32()).collect()),
             origin: elem.origin.map(|v| v.to_string()),
             local_pref: elem.local_pref,
             med: elem.med,
@@ -30,13 +30,10 @@ fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
                 .communities
                 .map(|v| v.into_iter().map(|x| x.to_string()).collect()),
             atomic: match elem.atomic {
-                None => None,
-                Some(v) => match v {
-                    AtomicAggregate::NAG => Some("NAG".to_string()),
-                    AtomicAggregate::AG => Some("AG".to_string()),
-                },
+                true => {Some("AG".to_string())}
+                false => {Some("NAG".to_string())}
             },
-            aggr_asn: elem.aggr_asn.map(|v| v.asn),
+            aggr_asn: elem.aggr_asn.map(|v| v.to_u32()),
             aggr_ip: elem.aggr_ip.map(|v| v.to_string()),
         }
     }
@@ -61,7 +58,6 @@ fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
     }
 
     #[pyclass]
-    #[pyo3(text_signature = "(url, filters, /)")]
     struct Parser {
         elem_iter: ElemIterator<Box<dyn Send + Read>>,
     }
@@ -69,6 +65,7 @@ fn pybgpkit_parser(_py: Python, m: &PyModule) -> PyResult<()> {
     #[pymethods]
     impl Parser {
         #[new]
+        #[pyo3(text_signature = "(url, filters, /)")]
         fn new(
             url: String,
             filters: Option<HashMap<String, String>>,
