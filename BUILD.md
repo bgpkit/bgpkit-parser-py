@@ -4,6 +4,7 @@
 
 - `maturin`
 - `docker`
+  - run `docker build . -t bgpkit-builder:latest` to build the builder image
 
 ## Checklist
 

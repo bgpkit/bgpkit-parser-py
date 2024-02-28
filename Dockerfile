@@ -1,6 +1,6 @@
 FROM ubuntu:jammy
 
-RUN apt update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y curl libssl-dev pkg-config build-essential software-properties-common tzdata git vim
+RUN apt update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y curl libssl-dev pkg-config build-essential software-properties-common tzdata git vim cmake
 
 # install different versions of Python
 RUN add-apt-repository ppa:deadsnakes/ppa -y && apt update
