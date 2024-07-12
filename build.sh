@@ -10,8 +10,10 @@ if [ ! -f "$PYPICRC_FILE" ]; then
     exit 1
 fi
 
-maturin publish --interpreter python3.8 --skip-existing
-maturin publish --interpreter python3.9 --skip-existing
-maturin publish --interpreter python3.10 --skip-existing
-maturin publish --interpreter python3.11 --skip-existing
-maturin publish --interpreter python3.12 --skip-existing
+rm -f target/wheels/*
+
+maturin build --sdist --interpreter python3.8 
+maturin build --sdist --interpreter python3.9 
+maturin build --sdist --interpreter python3.10
+maturin build --sdist --interpreter python3.11
+maturin build --sdist --interpreter python3.12
