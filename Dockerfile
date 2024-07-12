@@ -13,7 +13,6 @@ python3.11 python3.11-distutils \
 python3.12 python3.12-distutils
 
 RUN \
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3.7 && \
 curl -sS https://bootstrap.pypa.io/get-pip.py | python3.8 && \
 curl -sS https://bootstrap.pypa.io/get-pip.py | python3.9 && \
 curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10 && \
