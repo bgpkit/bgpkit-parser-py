@@ -12,8 +12,8 @@ fi
 
 rm -f target/wheels/*
 
-maturin build --sdist --interpreter python3.8 
 maturin build --sdist --interpreter python3.9 
 maturin build --sdist --interpreter python3.10
 maturin build --sdist --interpreter python3.11
 maturin build --sdist --interpreter python3.12
+maturin build --sdist --interpreter python3.13

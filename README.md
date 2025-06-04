@@ -14,8 +14,8 @@ parser = Parser(
 )
 
 for elem in parser:
-    print(elem["origin_asns"])
-    print(json.dumps(elem, indent=4))
+    print(elem.origin_asns)
+    print(json.dumps(elem.to_dict(), indent=4))
     break
 ```
 
@@ -33,18 +33,57 @@ parser = Parser(
 )
 
 for elem in parser:
-    print(elem["origin_asns"])
-    print(json.dumps(elem, indent=4))
+    print(elem.origin_asns)
+    print(json.dumps(elem.to_dict(), indent=4))
     break
+```
+
+## Available fields for `Elem`
+
+```rust
+    #[pyclass]
+    #[derive(Clone, PartialEq)]
+    pub struct Elem {
+        #[pyo3(get, set)]
+        pub timestamp: f64,
+        #[pyo3(get, set)]
+        pub elem_type: String,
+        #[pyo3(get, set)]
+        pub peer_ip: String,
+        #[pyo3(get, set)]
+        pub peer_asn: u32,
+        #[pyo3(get, set)]
+        pub prefix: String,
+        #[pyo3(get, set)]
+        pub next_hop: Option<String>,
+        #[pyo3(get, set)]
+        pub as_path: Option<String>,
+        #[pyo3(get, set)]
+        pub origin_asns: Option<Vec<u32>>,
+        #[pyo3(get, set)]
+        pub origin: Option<String>,
+        #[pyo3(get, set)]
+        pub local_pref: Option<u32>,
+        #[pyo3(get, set)]
+        pub med: Option<u32>,
+        #[pyo3(get, set)]
+        pub communities: Option<Vec<String>>,
+        #[pyo3(get, set)]
+        pub atomic: Option<String>,
+        #[pyo3(get, set)]
+        pub aggr_asn: Option<u32>,
+        #[pyo3(get, set)]
+        pub aggr_ip: Option<String>,
+    }
 ```
 
 ## Supported Python Version
 
-- Python3.8
 - Python3.9
 - Python3.10
 - Python3.11
 - Python3.12
+- Python3.13
 
 ## Installation
 
