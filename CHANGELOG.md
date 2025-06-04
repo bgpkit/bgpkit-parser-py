@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.6.0 - 2025-06-04
+
+### Highlights
+* Update `bgpkit-parser` to v0.11.0, which includes several bug fixes and performance improvements.
+* Add support for Python 3.13.
+
+### Breaking changes
+* The `Elem` class's fields can only be access by their getter methods now. Direct access to fields is no longer allowed. This change improves encapsulation and ensures that the internal state of `Elem` is managed correctly.
+
 ## 0.5.1 - 2024-02-28
 
 ### Highlights
