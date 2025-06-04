@@ -29,8 +29,8 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
                 .communities
                 .map(|v| v.into_iter().map(|x| x.to_string()).collect()),
             atomic: match elem.atomic {
-                true => {Some("AG".to_string())}
-                false => {Some("NAG".to_string())}
+                true => Some("AG".to_string()),
+                false => Some("NAG".to_string()),
             },
             aggr_asn: elem.aggr_asn.map(|v| v.to_u32()),
             aggr_ip: elem.aggr_ip.map(|v| v.to_string()),
@@ -41,7 +41,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     #[derive(Clone, PartialEq)]
     pub struct Elem {
         #[pyo3(get, set)]
-    pub timestamp: f64,
+        pub timestamp: f64,
         #[pyo3(get, set)]
         pub elem_type: String,
         #[pyo3(get, set)]
@@ -84,11 +84,13 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
             dict.set_item("prefix", self.prefix.clone()).unwrap();
             dict.set_item("next_hop", self.next_hop.clone()).unwrap();
             dict.set_item("as_path", self.as_path.clone()).unwrap();
-            dict.set_item("origin_asns", self.origin_asns.clone()).unwrap();
+            dict.set_item("origin_asns", self.origin_asns.clone())
+                .unwrap();
             dict.set_item("origin", self.origin.clone()).unwrap();
             dict.set_item("local_pref", self.local_pref).unwrap();
             dict.set_item("med", self.med).unwrap();
-            dict.set_item("communities", self.communities.clone()).unwrap();
+            dict.set_item("communities", self.communities.clone())
+                .unwrap();
             dict.set_item("atomic", self.atomic.clone()).unwrap();
             dict.set_item("aggr_asn", self.aggr_asn).unwrap();
             dict.set_item("aggr_ip", self.aggr_ip.clone()).unwrap();
@@ -143,7 +145,10 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         }
 
         fn parse_next(&mut self, py: Python) -> PyResult<Option<Py<Elem>>> {
-            Ok(self.elem_iter.next().map(|e| Py::new(py, convert_elem(e)).unwrap()))
+            Ok(self
+                .elem_iter
+                .next()
+                .map(|e| Py::new(py, convert_elem(e)).unwrap()))
         }
 
         fn __iter__(slf: PyRef<Self>) -> PyRef<Self> {
@@ -151,7 +156,9 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         }
 
         fn __next__(mut slf: PyRefMut<Self>, py: Python) -> Option<Py<Elem>> {
-            slf.elem_iter.next().map(|e| Py::new(py, convert_elem(e)).unwrap())
+            slf.elem_iter
+                .next()
+                .map(|e| Py::new(py, convert_elem(e)).unwrap())
         }
     }
 
