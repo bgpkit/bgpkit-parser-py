@@ -15,7 +15,7 @@ name = "pybgpkit_parser"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-bgpkit-parser = "0.10.9"
+bgpkit-parser = "0.11.0"
 pyo3 = { version = "0.25", features = ["extension-module"] }
 dict_derive = "0.5.0"
 
