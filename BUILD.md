@@ -13,7 +13,10 @@
 3. run [`build.sh`](./build.sh) on Intel Mac
 4. run [`build.sh`](./build.sh) inside docker on Intel Mac
 
-Then run `twine upload --skip-existing target/wheels/*` at all machines.
+Then run 
+```
+twine upload --skip-existing target/wheels/*
+```
 
 ## Build Linux packages in Docker
 
@@ -24,9 +27,5 @@ docker build -t bgpkit-builder:latest .
 
 Run `docker run --rm -it bgpkit-builder:latest bash` to open a shell in the container
 ```bash
-####
-# TODO: copy the content of .pypirc to the root folder
-####
-
 bash build.sh
 ```

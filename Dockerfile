@@ -18,7 +18,7 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.12 ge
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.13 get-pip.py --break-system-packages && rm get-pip.py
 
 # install maturin
-RUN python3.13 -m pip install maturin patchelf
+RUN python3.13 -m pip install maturin patchelf twine
 # install Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
