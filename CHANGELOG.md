@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.6.1 - 2025-06-06
+
+### Highlights
+
+* Update `bgpkit-parser` to v0.11.1, which includes a fix on parsing for `next_hop` for IPv6 peers.
+
 ## 0.6.0 - 2025-06-04
 
 ### Highlights
