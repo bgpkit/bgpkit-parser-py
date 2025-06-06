@@ -17,3 +17,5 @@ venv
 cache
 
 .DS_Store
+
+.pypirc

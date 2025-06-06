@@ -29,3 +29,5 @@ COPY ./build.sh .
 COPY ./Cargo.toml .
 COPY ./README.md .
 COPY ./pyproject.toml .
+
+COPY ./.pypirc /root/.pypirc
