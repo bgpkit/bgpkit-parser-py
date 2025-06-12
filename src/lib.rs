@@ -4,6 +4,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use std::collections::HashMap;
 use std::io::Read;
+use serde::Serialize;
 
 #[pymodule]
 fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
@@ -38,7 +39,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     }
 
     #[pyclass]
-    #[derive(Clone, PartialEq)]
+    #[derive(Clone, PartialEq, Serialize)]
     pub struct Elem {
         #[pyo3(get, set)]
         pub timestamp: f64,
@@ -100,6 +101,11 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         fn __getstate__(&self, py: Python) -> PyObject {
             self.to_dict(py)
         }
+
+        #[pyo3(name = "__str__")]
+        fn str_repr(&self) -> PyResult<String> {
+            Ok(format!("{}", serde_json::to_string(self).unwrap()))
+        }
     }
 
     #[pyclass]
@@ -134,7 +140,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
             }
             let elem_iter = parser.into_iter();
             Ok(Parser { elem_iter })
-        }
+       }
 
         fn parse_all(&mut self, py: Python) -> PyResult<Vec<Py<Elem>>> {
             let mut elems = vec![];
