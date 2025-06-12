@@ -2,9 +2,9 @@ use bgpkit_parser::models::*;
 use bgpkit_parser::*;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use serde::Serialize;
 use std::collections::HashMap;
 use std::io::Read;
-use serde::Serialize;
 
 #[pymodule]
 fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
@@ -140,7 +140,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
             }
             let elem_iter = parser.into_iter();
             Ok(Parser { elem_iter })
-       }
+        }
 
         fn parse_all(&mut self, py: Python) -> PyResult<Vec<Py<Elem>>> {
             let mut elems = vec![];
