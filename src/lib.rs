@@ -113,7 +113,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     #[pymethods]
     impl Parser {
         #[new]
-        #[pyo3(text_signature = "(url, filters, /)")]
+        #[pyo3(signature = (url, filters=None, cache_dir=None))]
         fn new(
             url: String,
             filters: Option<HashMap<String, String>>,
