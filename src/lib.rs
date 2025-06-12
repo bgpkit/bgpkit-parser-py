@@ -104,7 +104,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
 
         #[pyo3(name = "__str__")]
         fn str_repr(&self) -> PyResult<String> {
-            Ok(format!("{}", serde_json::to_string(self).unwrap()))
+            Ok(serde_json::to_string(self).unwrap().to_string())
         }
     }
 
