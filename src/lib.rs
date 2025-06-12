@@ -2,6 +2,7 @@ use bgpkit_parser::models::*;
 use bgpkit_parser::*;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use serde::Serialize;
 use std::collections::HashMap;
 use std::io::Read;
 
@@ -38,7 +39,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     }
 
     #[pyclass]
-    #[derive(Clone, PartialEq)]
+    #[derive(Clone, PartialEq, Serialize)]
     pub struct Elem {
         #[pyo3(get, set)]
         pub timestamp: f64,
@@ -100,6 +101,11 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         fn __getstate__(&self, py: Python) -> PyObject {
             self.to_dict(py)
         }
+
+        #[pyo3(name = "__str__")]
+        fn str_repr(&self) -> PyResult<String> {
+            Ok(serde_json::to_string(self).unwrap().to_string())
+        }
     }
 
     #[pyclass]
@@ -113,7 +119,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     #[pymethods]
     impl Parser {
         #[new]
-        #[pyo3(text_signature = "(url, filters, /)")]
+        #[pyo3(signature = (url, filters=None, cache_dir=None))]
         fn new(
             url: String,
             filters: Option<HashMap<String, String>>,

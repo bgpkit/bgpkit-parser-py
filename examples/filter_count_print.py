@@ -13,8 +13,9 @@ for elem in parser:
     print(elem.as_path)
 
     # Optional fields can be checked for None
-    print(elem.aggr_ip==None)
+    print(elem.aggr_ip is None)
 
     # Print the entire parsed BGP update as a dictionary
-    print(json.dumps(elem.to_dict(), indent=4))
+    print(json.dumps(elem.to_dict()))
+    print(elem)
     break
