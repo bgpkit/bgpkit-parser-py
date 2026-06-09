@@ -17,7 +17,6 @@ The release workflow will:
 2. Build the source distribution (`sdist`)
 3. Build ABI3 wheels for:
    - Linux x86_64
-   - Linux aarch64
    - macOS x86_64
    - macOS arm64
    - Windows x86_64
