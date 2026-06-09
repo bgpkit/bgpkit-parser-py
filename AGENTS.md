@@ -81,4 +81,4 @@ twine upload --skip-existing target/wheels/*
 - `bgpkit-parser` crate version bump is the primary release trigger (see CHANGELOG for version history)
 - Release workflow: `rust.yaml` runs Rust + Python API checks on PR/push; `release.yml` builds ABI3 wheels and publishes on `v*` tag push via Trusted Publishing
 - Supports Python 3.9+ via ABI3 wheels
-- No Python tests in-repo; examples in `examples/` serve as smoke tests
+- Python API tests live in `tests/test_api.py`; network smoke coverage is gated by `PYBGPKIT_RUN_NETWORK_TESTS=1`

@@ -531,70 +531,53 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         }
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct Parser {
         elem_iter: Option<ElemIterator<Box<dyn Send + Read>>>,
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct BatchIterator {
         elem_iter: Option<ElemIterator<Box<dyn Send + Read>>>,
         batch_size: usize,
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct RouteParser {
         route_iter: Option<RouteIterator<Box<dyn Send + Read>>>,
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct RouteBatchIterator {
         route_iter: Option<RouteIterator<Box<dyn Send + Read>>>,
         batch_size: usize,
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct TupleIterator {
         elem_iter: Option<ElemIterator<Box<dyn Send + Read>>>,
         fields: Vec<ElemField>,
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct TupleBatchIterator {
         elem_iter: Option<ElemIterator<Box<dyn Send + Read>>>,
         fields: Vec<ElemField>,
         batch_size: usize,
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct RouteTupleIterator {
         route_iter: Option<RouteIterator<Box<dyn Send + Read>>>,
         fields: Vec<RouteField>,
     }
 
-    #[pyclass]
+    #[pyclass(unsendable)]
     struct RouteTupleBatchIterator {
         route_iter: Option<RouteIterator<Box<dyn Send + Read>>>,
         fields: Vec<RouteField>,
         batch_size: usize,
     }
-
-    unsafe impl Send for Parser {}
-    unsafe impl Sync for Parser {}
-    unsafe impl Send for BatchIterator {}
-    unsafe impl Sync for BatchIterator {}
-    unsafe impl Send for RouteParser {}
-    unsafe impl Sync for RouteParser {}
-    unsafe impl Send for RouteBatchIterator {}
-    unsafe impl Sync for RouteBatchIterator {}
-    unsafe impl Send for TupleIterator {}
-    unsafe impl Sync for TupleIterator {}
-    unsafe impl Send for TupleBatchIterator {}
-    unsafe impl Sync for TupleBatchIterator {}
-    unsafe impl Send for RouteTupleIterator {}
-    unsafe impl Sync for RouteTupleIterator {}
-    unsafe impl Send for RouteTupleBatchIterator {}
-    unsafe impl Sync for RouteTupleBatchIterator {}
 
     #[pymethods]
     impl Parser {
@@ -746,13 +729,14 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         }
 
         fn __next__(mut slf: PyRefMut<Self>, py: Python) -> PyResult<Option<Py<PyTuple>>> {
-            let fields = slf.fields.clone();
+            let slf = &mut *slf;
+            let fields = slf.fields.as_slice();
             let Some(elem_iter) = slf.elem_iter.as_mut() else {
                 return Ok(None);
             };
             elem_iter
                 .next()
-                .map(|elem| elem_to_tuple(py, elem, &fields))
+                .map(|elem| elem_to_tuple(py, elem, fields))
                 .transpose()
         }
     }
@@ -764,7 +748,8 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         }
 
         fn __next__(mut slf: PyRefMut<Self>, py: Python) -> PyResult<Option<Vec<Py<PyTuple>>>> {
-            let fields = slf.fields.clone();
+            let slf = &mut *slf;
+            let fields = slf.fields.as_slice();
             let batch_size = slf.batch_size;
             let Some(elem_iter) = slf.elem_iter.as_mut() else {
                 return Ok(None);
@@ -783,7 +768,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
 
             elems
                 .into_iter()
-                .map(|elem| elem_to_tuple(py, elem, &fields))
+                .map(|elem| elem_to_tuple(py, elem, fields))
                 .collect::<PyResult<Vec<_>>>()
                 .map(Some)
         }
@@ -911,13 +896,14 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         }
 
         fn __next__(mut slf: PyRefMut<Self>, py: Python) -> PyResult<Option<Py<PyTuple>>> {
-            let fields = slf.fields.clone();
+            let slf = &mut *slf;
+            let fields = slf.fields.as_slice();
             let Some(route_iter) = slf.route_iter.as_mut() else {
                 return Ok(None);
             };
             route_iter
                 .next()
-                .map(|route| route_to_tuple(py, route, &fields))
+                .map(|route| route_to_tuple(py, route, fields))
                 .transpose()
         }
     }
@@ -929,7 +915,8 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
         }
 
         fn __next__(mut slf: PyRefMut<Self>, py: Python) -> PyResult<Option<Vec<Py<PyTuple>>>> {
-            let fields = slf.fields.clone();
+            let slf = &mut *slf;
+            let fields = slf.fields.as_slice();
             let batch_size = slf.batch_size;
             let Some(route_iter) = slf.route_iter.as_mut() else {
                 return Ok(None);
@@ -948,7 +935,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
 
             routes
                 .into_iter()
-                .map(|route| route_to_tuple(py, route, &fields))
+                .map(|route| route_to_tuple(py, route, fields))
                 .collect::<PyResult<Vec<_>>>()
                 .map(Some)
         }
