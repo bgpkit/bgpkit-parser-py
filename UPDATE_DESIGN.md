@@ -415,7 +415,7 @@ fn from_filters(
 
 - `bgpkit-parser` 0.17.0 requires Rust 1.87.0 (MSRV). We have 1.91.1. ✓
 - PyO3 0.28.3 requires Rust 1.83.0. We have 1.91.1. ✓
-- The `unsafe impl Send/Sync` for `Parser` must be verified after the bump. If the v0.17.0 `ElemIterator` is no longer `Send`, we use a different approach.
+- All PyO3 wrapper types use `#[pyclass(unsendable)]` instead of `unsafe impl Send/Sync`.
 - `maturin-action` builds `manylinux` wheels automatically. No custom `Dockerfile` needed for CI.
-- Keep `Dockerfile` and `build.sh` as manual fallbacks. Remove in a future cleanup PR.
+- Keep `Dockerfile` and `build.sh` as manual fallbacks. `build.sh` references per-version Python builds which are superseded by ABI3; replace or remove in a future cleanup PR.
 - The CI workflow will produce **5 ABI3 wheels** (one per supported platform) + **1 sdist** per release.
