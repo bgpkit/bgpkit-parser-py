@@ -65,4 +65,3 @@ maturin build --release --sdist
 twine upload --skip-existing target/wheels/*
 ```
 
-The historical `build.sh` and `Dockerfile` are kept as fallback tools for reproducing older manual builds, but CI is the preferred release path.

@@ -7,13 +7,13 @@ Python binding for `bgpkit-parser` (Rust MRT/BGP parser). Exposes `Parser` (full
 ## STRUCTURE
 
 ```
-├── src/lib.rs          # Entire Python extension: Parser + Elem PyO3 classes
+├── src/lib.rs          # Entire Python extension: Parser/elem/route PyO3 classes
 ├── examples/           # Python usage examples
-├── build.sh            # Maturin build for multiple Python versions
-├── Dockerfile          # Ubuntu builder for cross-platform Linux wheels
 ├── Cargo.toml          # Rust crate: pybgpkit-parser, depends on bgpkit-parser
 ├── pyproject.toml      # Maturin build-system config
 ├── build.rs            # PyO3 extension module linker setup
+├── benches/            # Rust criterion benchmarks
+├── tests/              # Python API tests and benchmark
 └── .github/workflows/  # Rust fmt/clippy CI + tag-based release
 ```
 
@@ -23,9 +23,8 @@ Python binding for `bgpkit-parser` (Rust MRT/BGP parser). Exposes `Parser` (full
 |------|----------|
 | Change exposed Python API | `src/lib.rs` |
 | Update underlying parser logic | `Cargo.toml` → bump `bgpkit-parser` version |
-| Add Python version support | `build.sh` + `Dockerfile` + `README.md` |
 | Build/test locally | `maturin develop` (see README.md) |
-| Build wheels for release | GitHub Actions `release.yml` / `maturin build --release` locally |
+| Build wheels for release | GitHub Actions `release.yml` (push `v*` tag) |
 | Publish to PyPI | Push `v*` tag; CI publishes via PyPI Trusted Publishing (OIDC) |
 
 ## CODE MAP
@@ -67,9 +66,6 @@ maturin build --release
 # Build and publish release via CI
 git tag v0.7.0
 git push origin v0.7.0
-
-# Manual fallback only
-bash build.sh
 
 # Format + lint
 cargo fmt --check
