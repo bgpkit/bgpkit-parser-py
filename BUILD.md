@@ -21,20 +21,23 @@ The release workflow will:
    - macOS x86_64
    - macOS arm64
    - Windows x86_64
-4. Publish artifacts to PyPI using `PYPI_API_TOKEN`
+4. Publish artifacts to PyPI using PyPI Trusted Publishing (OIDC)
 5. Create a GitHub Release and attach the built artifacts
 
 Manual workflow runs (`workflow_dispatch`) are build-only by default. They only publish when the `publish` input is explicitly enabled.
 
-## Required GitHub Secret
+## PyPI Trusted Publishing Setup
 
-Create a project-scoped PyPI API token and save it as a GitHub Actions secret:
+Configure a trusted publisher for the existing `pybgpkit-parser` PyPI project:
 
-```text
-PYPI_API_TOKEN
-```
+| Field | Value |
+|------|-------|
+| Owner | `bgpkit` |
+| Repository name | `bgpkit-parser-py` |
+| Workflow name | `release.yml` |
+| Environment name | `pypi` |
 
-Recommended token scope: only the `pybgpkit-parser` project.
+The workflow uses GitHub Actions OIDC (`id-token: write`) and does not require a long-lived PyPI API token.
 
 ## Local Development Build
 

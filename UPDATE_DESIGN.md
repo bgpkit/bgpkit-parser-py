@@ -65,15 +65,15 @@ This plan covers a comprehensive update of `bgpkit-parser-py` in **one pull requ
 
 Also optimize `parse_all()` by parsing while detached from the Python interpreter (`py.detach(...)`) before converting the collected Rust `Elem` values into Python objects.
 
-### 8. CI/CD: `maturin-action` + PyPI Token
+### 8. CI/CD: `maturin-action` + PyPI Trusted Publishing
 
-**Decision:** Use `PyO3/maturin-action` for all wheel builds, publish via `MATURIN_PYPI_TOKEN`, and use ABI3 (`abi3-py39`) to build one wheel per platform instead of per Python version.
+**Decision:** Use `PyO3/maturin-action` for all wheel builds, publish via PyPI Trusted Publishing (OIDC), and use ABI3 (`abi3-py39`) to build one wheel per platform instead of per Python version.
 
 **Rationale:**
 - `maturin-action` handles cross-compilation, manylinux, and all platforms automatically
 - Replaces the manual process (2 Macs + Docker + `twine upload`)
 - Produces ABI3 wheels for macOS x86_64/arm64, Linux x86_64/aarch64, Windows x86_64
-- PyPI token is simpler than OIDC (Trusted Publishing) for immediate setup
+- Trusted Publishing avoids long-lived PyPI API tokens
 - Manual `workflow_dispatch` runs are build-only by default to avoid accidental PyPI publication
 
 ### 9. `unsafe impl Send/Sync` for `Parser`
@@ -319,7 +319,7 @@ fn from_filters(
 - Platform matrix: macOS x86_64, macOS arm64, Linux x86_64, Linux aarch64, Windows x86_64
 - ABI3 Python compatibility: 3.9–3.13 from one wheel per platform
 - Trigger: `v[0-9]+.*` tags + `workflow_dispatch`
-- PyPI publish via `MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}`
+- PyPI publish via PyPI Trusted Publishing / GitHub OIDC (`id-token: write`)
 - GitHub Release creation via `taiki-e/create-gh-release-action@v1`
 
 **21. `.github/workflows/rust.yaml`**
@@ -376,7 +376,7 @@ fn from_filters(
 
 ## Pre-PR Checklist
 
-- [ ] `PYPI_API_TOKEN` secret added to GitHub repo
+- [ ] PyPI Trusted Publisher configured for `bgpkit/bgpkit-parser-py`, workflow `release.yml`, environment `pypi`
 - [ ] `cargo check` passes after dependency bump
 - [ ] `maturin develop` builds successfully
 - [ ] `examples/filter_count_print.py` runs without error
@@ -409,7 +409,7 @@ fn from_filters(
    - **Default:** No. Separate wheels are smaller. Revisit if users complain.
 
 5. **Should we migrate to Trusted Publishing (OIDC) instead of API token?**
-   - **Default:** No. API token works now. OIDC is a follow-up security improvement.
+   - **Decision:** Yes. Release publishing uses `pypa/gh-action-pypi-publish` with GitHub OIDC and `environment: pypi`.
 
 ## Notes
 

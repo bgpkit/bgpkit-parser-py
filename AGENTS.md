@@ -26,7 +26,7 @@ Python binding for `bgpkit-parser` (Rust MRT/BGP parser). Exposes a single `Pars
 | Add Python version support | `build.sh` + `Dockerfile` + `README.md` |
 | Build/test locally | `maturin develop` (see README.md) |
 | Build wheels for release | GitHub Actions `release.yml` / `maturin build --release` locally |
-| Publish to PyPI | Push `v*` tag; CI publishes with `PYPI_API_TOKEN` |
+| Publish to PyPI | Push `v*` tag; CI publishes via PyPI Trusted Publishing (OIDC) |
 
 ## CODE MAP
 
@@ -47,6 +47,7 @@ Python binding for `bgpkit-parser` (Rust MRT/BGP parser). Exposes a single `Pars
 
 - **Do NOT** change PyO3/maturin versions without updating both `Cargo.toml` and `build.rs` (`pyo3-build-config` must match)
 - **Do NOT** test release publishing with a beta tag unless the package version is also beta; use `workflow_dispatch` with `publish=false` for build-only checks
+- **Do NOT** add long-lived PyPI API tokens; use PyPI Trusted Publishing with GitHub OIDC (`environment: pypi`)
 - **Do NOT** add `unsafe Send/Sync` for new types without verifying thread safety with the underlying Rust iterator
 - **Do NOT** use `.unwrap()` on user inputs (URL/filters); already handled in `BgpkitParser::new` but be careful with new additions
 - **Do NOT** make `Elem` fields write-only or remove getters without noting in CHANGELOG as breaking (v0.6.0 was a breaking change)
@@ -78,6 +79,6 @@ twine upload --skip-existing target/wheels/*
 ## NOTES
 
 - `bgpkit-parser` crate version bump is the primary release trigger (see CHANGELOG for version history)
-- Release workflow: `rust.yaml` runs Rust + Python API checks on PR/push; `release.yml` builds ABI3 wheels and publishes on `v*` tag push
+- Release workflow: `rust.yaml` runs Rust + Python API checks on PR/push; `release.yml` builds ABI3 wheels and publishes on `v*` tag push via Trusted Publishing
 - Supports Python 3.9+ via ABI3 wheels
 - No Python tests in-repo; examples in `examples/` serve as smoke tests
