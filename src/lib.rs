@@ -386,13 +386,14 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
                 "aggr_asn",
                 "aggr_ip",
                 "only_to_customer",
+                "peer_bgp_id",
             ]
             .join("|")
         }
 
         pub fn to_psv(&self) -> String {
             format!(
-                "{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}",
+                "{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}",
                 self.elem_type,
                 self.timestamp,
                 self.peer_ip,
@@ -409,6 +410,7 @@ fn pybgpkit_parser(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
                 option_to_string(&self.aggr_asn),
                 option_to_string(&self.aggr_ip),
                 option_to_string(&self.only_to_customer),
+                option_to_string(&self.peer_bgp_id),
             )
         }
     }

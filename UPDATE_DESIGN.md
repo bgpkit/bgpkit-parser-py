@@ -76,11 +76,11 @@ Also optimize `parse_all()` by parsing while detached from the Python interprete
 - Trusted Publishing avoids long-lived PyPI API tokens
 - Manual `workflow_dispatch` runs are build-only by default to avoid accidental PyPI publication
 
-### 9. `unsafe impl Send/Sync` for `Parser`
+### 9. Thread safety for `pyclass` iterator wrappers
 
-**Decision:** Keep and verify after the `bgpkit-parser` bump.
+**Decision:** Use `#[pyclass(unsendable)]` for all iterator-backed PyO3 wrapper types rather than `unsafe impl Send/Sync`.
 
-**Rationale:** The `ElemIterator` type may have changed in v0.17.0. If `BgpkitParser::into_iter()` no longer returns `Send`, we switch to a different approach (e.g., `into_elem_iter()` or `into_fallible_elem_iter()`).
+**Rationale:** The underlying upstream iterator types (`ElemIterator`, `RouteIterator`) are not guaranteed thread-safe, and Python can share/transfer objects across threads. Marking them `unsendable` is the safe, idiomatic PyO3 approach.
 
 ## Data Structures
 
