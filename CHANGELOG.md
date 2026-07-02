@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.18.0 - 2026-07-02
+
+### Highlights
+
+* Update `bgpkit-parser` to v0.18.0.
+
 ## v0.7.0 - 2026-06-09
 
 ### Highlights
