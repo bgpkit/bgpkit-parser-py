@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.24.0 - 2026-11-06
+
+### Highlights
+
+* Update `bgpkit-parser` to v0.24.0.
+* Withdrawals are no longer lost when an NLRI list starts with a default route: the parser read the
+  leading `/0` as an ADD-PATH path identifier, so a message whose withdrawn list began with
+  `0.0.0.0/0` or `::/0` dropped prefixes, sometimes all of them. Python callers see the missing
+  withdrawals appear in `Parser` output; no API change.
+* The underlying parser also decodes EVPN NLRI (AFI 25 / SAFI 70) and carries the new `Afi`/`Safi`
+  families. The Python surface is unchanged.
+
 ## v0.18.0 - 2026-07-02
 
 ### Highlights
