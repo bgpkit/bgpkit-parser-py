@@ -49,6 +49,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # `os` picks the runner, `target` the wheel it produces, and on macOS the two
+        # differ: every GitHub macOS image with a plain name is arm64, so the x86_64
+        # wheel is cross-compiled on the arm64 macos-15 runner. `macos-latest` is the
+        # macOS 26 arm64 image and moves with GitHub's image rollover, which is why the
+        # arm64 job tracks it while the x86_64 job names its runner. A native Intel
+        # build would need macos-15-intel, a smaller pool.
         include:
           - os: ubuntu-latest
             target: x86_64
